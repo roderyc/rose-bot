@@ -1,6 +1,7 @@
 from flask import Flask, request
-import requests
 import os
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -13,7 +14,7 @@ HIGH_CLASS_ROSE_LINK = 'https://drizly.com/meiomi-rose/p61784'
 BRO_ROSE_LINK = 'https://drizly.com/charles-and-charles-rose/p2516'
 BASIC_ROSE_LINK = 'https://drizly.com/white-girl-rose/p20394'
 
-INITIAL_BODY = '''<p>Well hello there, it sounds like you're thirsty as hell and in need of a refreshing drink. Might I interest you in a ros\xe9?</p>
+INITIAL_BODY = u'''<p>Well hello there, it sounds like you're thirsty as hell and in need of a refreshing drink. Might I interest you in a ros\xe9?</p>
 <p>I've quite a selection, but how about you tell me a little about yourself so I can refer you to the proper drink?</p>
 <p>Are you currently on a yacht or feel you deserve to be?</p>
 <p>Going out with your bros and not held back by masculo-normative bullshit?</p>
@@ -45,9 +46,9 @@ def post_message(conversationId, message):
     r.raise_for_status()
 
 def make_message(orgId, body, type, buttons=[]):
-    return {'orgId': orgId, 'body': body, 'type': type, 'buttons': []}
+    return {'orgId': orgId, 'body': body, 'type': type, 'buttons': buttons}
 
-def respond_to_probable_button_response(conversationId, body, state):
+def respond_to_probable_button_response(conversationId, orgId, body, state):
     if body == BOAT_RESPONSE:
         post_message(conversationId, make_message(orgId, 'This should satisfy you, bourgeois animal ' + HIGH_CLASS_ROSE_LINK, 'chat'))
         return SATISFIED
@@ -72,25 +73,29 @@ def handle_state_edge(state, orgId, message):
     body = message.get('body')
 
     if state == BEGINNING:
-        post_message(make_message(orgId, INITIAL_BODY, 'chat'))
+        post_message(conversationId, make_message(orgId, INITIAL_BODY, 'chat', INITIAL_RESPONSE_BUTTONS))
         return ASKED
     if state == ASKED:
-        return respond_to_probable_button_response(conversationId, body)
+        return respond_to_probable_button_response(conversationId, orgId, body)
     elif state == CONFUSED:
-        return respond_to_probable_button_response(conversationId, body)
+        return respond_to_probable_button_response(conversationId, orgId, body)
     elif state == SATISFIED:
         return state
 
 @app.route('/', methods=['POST'])
-def accept_message(event):
+def accept_message():
     event = request.get_json()    
     if event and event.get('type') == 'new-message':
+        orgId = event.get('orgId')
         message = event.get('data')
-        conversationId = message.get('conversationId');        
+        conversationId = message.get('conversationId')
         if (CONVERSATIONS.has_key(conversationId)):
             state = CONVERSATIONS[conversationId]
-            CONVERSATIONS[conversationId] = handle_state_edge(state, message)
+            CONVERSATIONS[conversationId] = handle_state_edge(state, orgId, message)
         elif ('rose' in message.get('body').lower() and
               'contact' == message.get('author').get('type')):
-            CONVERSATIONS[conversationId] = handle_state_edge(BEGINNING, message)
-    return
+            CONVERSATIONS[conversationId] = handle_state_edge(BEGINNING, orgId, message)
+    return json.dumps(CONVERSATIONS)
+
+if __name__ == "__main__":
+    app.run()
