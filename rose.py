@@ -17,7 +17,7 @@ BASIC_ROSE_LINK = 'https://drizly.com/white-girl-rose/p20394'
 INITIAL_BODY = u'''<p>Well hello there, it sounds like you're thirsty as hell and in need of a refreshing drink. Might I interest you in a ros\xe9?</p>
 <p>I've quite a selection, but how about you tell me a little about yourself so I can refer you to the proper drink?</p>
 <p>Are you currently on a yacht or feel you deserve to be?</p>
-<p>Going out with your bros and not held back by masculo-normative bullshit?</p>
+<p>Going out with the bros and got no time for masculo-normative bullshit?</p>
 <p>You a basic white girl?</p>
 '''
 
