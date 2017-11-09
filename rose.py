@@ -48,7 +48,7 @@ def post_message(conversationId, message):
 def make_message(orgId, body, type, buttons=[]):
     return {'orgId': orgId, 'body': body, 'type': type, 'buttons': buttons}
 
-def respond_to_probable_button_response(conversationId, orgId, body, state):
+def respond_to_probable_button_response(conversationId, orgId, body):
     if body == BOAT_RESPONSE:
         post_message(conversationId, make_message(orgId, 'This should satisfy you, bourgeois animal ' + HIGH_CLASS_ROSE_LINK, 'chat'))
         return SATISFIED
