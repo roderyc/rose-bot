@@ -10,11 +10,16 @@ ASKED = 'ASKED'
 CONFUSED = 'CONFUSED'
 SATISFIED = 'SATISFIED'
 
-INITIAL_BODY = u'''<p>Well hello there, it sounds like you're thirsty as hell and in need of a refreshing drink. Might I interest you in a ros\xe9?</p>
+INITIAL_BODY_1 = u'''<p>Well hello there, it sounds like you're thirsty as hell and in need of a refreshing drink. Might I interest you in a ros\xe9?</p>
 <p>I've quite a selection, but how about you tell me a little about yourself so I can refer you to the proper drink?</p>
-<p>Are you currently on a yacht or feel you deserve to be?</p>
-<p>Going out with the bros and got no time for masculo-normative bullshit?</p>
-<p>You a basic white girl?</p>
+'''
+
+INITIAL_BODY_2 = '''Are you:
+<ol>
+  <li>On a yacht or feel you deserve to be?</li>
+  <li>Going out with the bros and got no time for masculo-normative bullshit?</li>
+  <li>A basic white girl?</li>
+</ol>
 '''
 
 BOAT_RESPONSE = 'I\'m on a boat'
@@ -69,7 +74,8 @@ def handle_state_edge(state, orgId, message):
     body = message.get('body')
 
     if state == BEGINNING:
-        post_message(conversationId, make_message(orgId, INITIAL_BODY, 'chat', INITIAL_RESPONSE_BUTTONS))
+        post_message(conversationId, make_message(orgId, INITIAL_BODY_1, 'chat'))
+        post_message(conversationId, make_message(orgId, INITIAL_BODY_2, 'chat', INITIAL_RESPONSE_BUTTONS))
         return ASKED
     if state == ASKED:
         return respond_to_probable_button_response(conversationId, orgId, body)
