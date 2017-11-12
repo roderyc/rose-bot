@@ -91,12 +91,13 @@ def accept_message():
         orgId = event.get('orgId')
         message = event.get('data')
         conversationId = message.get('conversationId')
-        if (CONVERSATIONS.has_key(conversationId)):
-            state = CONVERSATIONS[conversationId]
-            CONVERSATIONS[conversationId] = handle_state_edge(state, orgId, message)
-        elif ('rose' in message.get('body').lower() and
-              'contact' == message.get('author').get('type')):
-            CONVERSATIONS[conversationId] = handle_state_edge(BEGINNING, orgId, message)
+
+        if 'contact' == message.get('author').get('type'):
+            if (CONVERSATIONS.has_key(conversationId)):
+                state = CONVERSATIONS[conversationId]
+                CONVERSATIONS[conversationId] = handle_state_edge(state, orgId, message)
+            elif 'rose' in message.get('body').lower():
+                CONVERSATIONS[conversationId] = handle_state_edge(BEGINNING, orgId, message)
     return json.dumps(CONVERSATIONS)
 
 if __name__ == "__main__":
