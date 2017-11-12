@@ -87,7 +87,7 @@ def handle_state_edge(state, orgId, message):
 @app.route('/', methods=['POST'])
 def accept_message():
     event = request.get_json()    
-    if event and event.get('type') == 'new-message':
+    if event and event.get('type') == 'new_message':
         orgId = event.get('orgId')
         message = event.get('data')
         conversationId = message.get('conversationId')
